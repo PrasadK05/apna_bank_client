@@ -1,7 +1,7 @@
 import { Box, Button, Input } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-export default function SearchBar({ getVal }) {
+export default function SearchBar({ getVal, handleReset }) {
   let [value, setValue] = useState("");
   let handleChange = (e) => {
     setValue(e.target.value);
@@ -11,6 +11,11 @@ export default function SearchBar({ getVal }) {
       return alert("Please Enter Something To Search");
     }
     getVal(value);
+  };
+
+  let handleClick = () => {
+    handleReset();
+    setValue("");
   };
   return (
     <Box display={"flex"} alignItems={"center"} ml="20px">
@@ -23,6 +28,9 @@ export default function SearchBar({ getVal }) {
       />
       <Button size="sm" onClick={handleSubmit}>
         Search
+      </Button>
+      <Button size="sm" onClick={handleClick} ml="10px">
+        Reset
       </Button>
     </Box>
   );

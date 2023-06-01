@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Box, Button, Text } from "@chakra-ui/react";
 import TransactionTable from "../components/TransactionTable";
 import { Link, useParams } from "react-router-dom";
+import SearchBar from "../components/SearchBar";
 
 export default function AccountTransaction() {
   let [trans, setTrans] = useState([]);
@@ -11,6 +12,42 @@ export default function AccountTransaction() {
   let [error, setError] = useState(false);
   const { data } = useSelector((store) => store.auth);
   const { id } = useParams();
+
+  let handleSearch = (val) => {
+    setLoading(true);
+    getSingleCustomersTr(data.token, id, val)
+      .then((res) => {
+        if (res) {
+          setTrans(res);
+          setLoading(false);
+        } else {
+          setError(true);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        setError(true);
+        setLoading(false);
+      });
+  };
+
+  let handleReset = () => {
+    setLoading(true);
+    getSingleCustomersTr(data.token, id)
+      .then((res) => {
+        if (res) {
+          setTrans(res);
+          setLoading(false);
+        } else {
+          setError(true);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        setError(true);
+        setLoading(false);
+      });
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -36,12 +73,18 @@ export default function AccountTransaction() {
         m="auto"
         mt="30px"
       >
+        <SearchBar getVal={handleSearch} handleReset={handleReset} />
         <Text fontSize={"2xl"} fontWeight={"bold"} ml="10px">
           Transaction
         </Text>
         <TransactionTable data={trans} loading={loading} error={error} />
         <Link to={"/banker"}>
-          <Button mt="20px" color="#FFFFFF" bg="#4299e1" _hover={{transform:"scale(1.1)"}}>
+          <Button
+            mt="20px"
+            color="#FFFFFF"
+            bg="#4299e1"
+            _hover={{ transform: "scale(1.1)" }}
+          >
             Go Back
           </Button>
         </Link>

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Box, Text } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { getCustomerTR } from "../redux/customer/customer.action";
@@ -18,9 +18,18 @@ export default function Customer() {
     dispatch(getCustomerTR({ token: data.token }, val));
   };
 
-  useEffect(() => {
+  let handleReset = () => {
     dispatch(getCustomerTR({ token: data.token }));
+  };
+
+  window.scroll(() => {
+    console.log("yes");
+  });
+
+  useEffect(() => {
+    dispatch(getCustomerTR({ token: data.token })).then(() => {});
   }, []);
+
   return (
     <>
       <CustomerProfile />
@@ -30,7 +39,7 @@ export default function Customer() {
         m="auto"
         mt="30px"
       >
-        <SearchBar getVal={handleSearch} />
+        <SearchBar getVal={handleSearch} handleReset={handleReset} />
         <Text fontSize={"2xl"} fontWeight={"bold"} ml="20px" mt="30px">
           Transactions
         </Text>

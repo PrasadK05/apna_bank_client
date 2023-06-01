@@ -109,7 +109,7 @@ export default function DepositModal() {
             >
               <option value="">Select Note</option>
               <option value="For buying a car">For buying a car</option>
-              <option value="For buying a car">For buying a bike</option>
+              <option value="For buying a bike">For buying a bike</option>
             </Select>
           </Box>
           <ModalCloseButton />

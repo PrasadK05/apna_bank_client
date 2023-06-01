@@ -36,6 +36,7 @@ export default function WithdrawModal() {
   let handleNoteChange = (e) => {
     setNote(e.target.value);
   };
+  
   let handleWithdraw = () => {
     let regEx = /^[0-9]+$/;
     setWithLoad(true);
@@ -47,6 +48,7 @@ export default function WithdrawModal() {
       return;
     }
     if (note === "") {
+      setWithLoad(false);
       return alert("Please Select Note");
     }
     if (account.balance < Number(withAmt)) {
@@ -55,10 +57,11 @@ export default function WithdrawModal() {
       alert("Insufficient Funds");
       return;
     }
-    withdrawAmt(data.token, withAmt)
+    withdrawAmt(data.token, withAmt, note)
       .then((res) => {
         setWithLoad(false);
         setWithAmt(0);
+        setNote("")
         alert(res);
         dispatch(getAcc({ token: data.token }));
         dispatch(getCustomerTR({ token: data.token }));
@@ -67,6 +70,7 @@ export default function WithdrawModal() {
       .catch((error) => {
         setWithLoad(false);
         setWithAmt(0);
+        setNote("")
         alert(error);
         return;
       });
@@ -112,7 +116,7 @@ export default function WithdrawModal() {
             >
               <option value="">Select Note</option>
               <option value="For buying a car">For buying a car</option>
-              <option value="For buying a car">For buying a bike</option>
+              <option value="For buying a bike">For buying a bike</option>
             </Select>
           </Box>
           <ModalCloseButton />
