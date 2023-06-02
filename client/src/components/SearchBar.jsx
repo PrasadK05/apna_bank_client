@@ -26,10 +26,16 @@ export default function SearchBar({ getVal, handleReset }) {
         value={value}
         onChange={handleChange}
       />
-      <Button size="sm" onClick={handleSubmit}>
+      <Button size="sm" onClick={handleSubmit} color="#FFFFFF" bg="#4299e1">
         Search
       </Button>
-      <Button size="sm" onClick={handleClick} ml="10px">
+      <Button
+        size="sm"
+        onClick={handleClick}
+        ml="10px"
+        color="#FFFFFF"
+        bg="#ed64a6"
+      >
         Reset
       </Button>
     </Box>
