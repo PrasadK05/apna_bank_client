@@ -13,50 +13,28 @@ import {
 import { useEffect, useRef, useState } from "react";
 
 export default function TransactionTable({ data, loading, error }) {
-  let [scrollData, setScrollData] = useState([]);
   let [page, setPage] = useState(1);
   let ref = useRef();
-  let [load, setLoad]=useState(true)
 
-  let callback = (entries, observer) => {
-    if (data.length !== 0) {      
-      let start = (page - 1) * 20;
-      let end = start + 20;
-      entries.forEach((element) => {
-        if (element.isIntersecting) {
-          if (start < data.length) {
-            setLoad(true)
-            let sd1 = data.slice(start, end);
-            setScrollData([...scrollData, ...sd1]);
-            setPage(page++);
-          } else {
-            console.log("over");
-            setLoad(false)
-          }
-        }
-      });
+  const handleScroll = () => {
+    const { scrollTop, scrollHeight, clientHeight } = ref.current;
+
+    if (scrollTop + clientHeight >= scrollHeight) {
+      setTimeout(() => {
+        setPage((prevPage) => prevPage + 1);
+      }, 2000);
     }
   };
 
   useEffect(() => {
-    setScrollData([]);
+    // Reset the page when new data is received
     setPage(1);
-
-    let observer = new IntersectionObserver(callback, { threshold: 1.0 });
-
-    if (ref?.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
   }, [data]);
-
+  const slicedData = data.slice(0, page * 20);
   return (
     <>
       <TableContainer display={"block"} mt="20px">
-        <Table size="md">
+        <Table size="md" w="90%">
           <Thead>
             <Tr>
               <Th>Sr. No</Th>
@@ -67,40 +45,57 @@ export default function TransactionTable({ data, loading, error }) {
               <Th>Note</Th>
             </Tr>
           </Thead>
-          <Tbody>
-            {scrollData.map((el, i) => {
-              return (
-                <Tr key={el._id}>
-                  <Td>{i + 1}</Td>
-                  <Td>{`${el.date} ${el.time}`}</Td>
-                  <Td color={"green"}>
-                    {el.type === "deposit" ? el.ammount : "-"}
-                  </Td>
-                  <Td color={"red"}>
-                    {el.type === "withdraw" ? el.ammount : "-"}
-                  </Td>
-                  <Td>{el.balance}</Td>
-                  <Td>{el.note}</Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
         </Table>
+        <Box
+          overflowY={"scroll"}
+          h="500px"
+          ref={ref}
+          onScroll={handleScroll}
+          // css={{
+          //   "&::-webkit-scrollbar": {
+          //     width: "0.4em",
+          //     background: "transparent",
+          //   },
+          //   "&::-webkit-scrollbar-thumb": {
+          //     background: "transparent",
+          //   },
+          // }}
+        >
+          <Table size="md">
+            <Tbody>
+              {slicedData.map((el, i) => {
+                return (
+                  <Tr key={el._id}>
+                    <Td>{i + 1}</Td>
+                    <Td>{`${el.date} ${el.time}`}</Td>
+                    <Td color={"green"}>
+                      {el.type === "deposit" ? el.ammount : "-"}
+                    </Td>
+                    <Td color={"red"}>
+                      {el.type === "withdraw" ? el.ammount : "-"}
+                    </Td>
+                    <Td>{el.balance}</Td>
+                    <Td>{el.note}</Td>
+                  </Tr>
+                );
+              })}
+            </Tbody>
+            <Box
+              display={loading ? "flex" : "none"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="lg"
+              />
+            </Box>
+          </Table>
+        </Box>
       </TableContainer>
-      <Box ref={ref} >{load?"...loading":"Done"}</Box>
-      <Box
-        display={loading ? "flex" : "none"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
-        <Spinner
-          thickness="4px"
-          speed="0.65s"
-          emptyColor="gray.200"
-          color="blue.500"
-          size="xl"
-        />
-      </Box>
       <Box
         display={error ? "flex" : "none"}
         justifyContent={"center"}
